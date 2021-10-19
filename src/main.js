@@ -8,7 +8,7 @@ const Common = (() => {
   return {
     EvaluateConditionElseThrowErrorMsg,
   };
-});
+})();
 
 const Board = (() => {
   const _board = [];
@@ -24,11 +24,11 @@ const Board = (() => {
   }
 
   function isPositionValid(position) {
-    Common().EvaluateConditionElseThrowErrorMsg(position > _BOARD_LIMIT_MAX || position < _BOARD_LIMIT_MIN, 'Not valid position');
+    Common.EvaluateConditionElseThrowErrorMsg(position > _BOARD_LIMIT_MAX || position < _BOARD_LIMIT_MIN, 'Not valid position');
   }
 
   function isMarkTypeValid(newMark) {
-    Common().EvaluateConditionElseThrowErrorMsg(_MARK_TYPES.some((markType) => newMark === markType), 'Not valid mark type');
+    Common.EvaluateConditionElseThrowErrorMsg(_MARK_TYPES.some((markType) => newMark === markType), 'Not valid mark type');
   }
 
   function isNewMarkTypeAndPositionValid(newMark, position) {
