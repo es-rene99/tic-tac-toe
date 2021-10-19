@@ -1,48 +1,69 @@
-const Board = (() => {
-  const _MARK_TYPES = ['O', 'X'];
-  const _boardMarks = {
-    1: undefined,
-    2: undefined,
-    3: undefined,
-    4: undefined,
-    5: undefined,
-    6: undefined,
-    7: undefined,
-    8: undefined,
-    9: undefined,
+const Common = (() => {
+  function EvaluateConditionElseThrowErrorMsg(condition, msg) {
+    if (condition) {
+      return true;
+    }
+    // throw (new Error(msg));
+  }
+  return {
+    EvaluateConditionElseThrowErrorMsg,
   };
-  const _BOARD_LIMIT_MAX = 9;
-  const _BOARD_LIMIT_MIN = 1;
+});
+
+const Board = (() => {
+  const _board = [];
+  const _MARK_TYPES = ['O', 'X'];
+  const _BOARD_LIMIT_MIN = 0;
+  const _BOARD_LIMIT_MAX = 8;
+  const _DEFAULT_MARK_VALUE = 'blank';
+
+  function initBoard() {
+    for (let index = _BOARD_LIMIT_MIN; index < _BOARD_LIMIT_MAX; index++) {
+      _board[index] = _DEFAULT_MARK_VALUE;
+    }
+  }
+
   function isPositionValid(position) {
-    return position > _BOARD_LIMIT_MAX || position < _BOARD_LIMIT_MIN;
+    Common().EvaluateConditionElseThrowErrorMsg(position > _BOARD_LIMIT_MAX || position < _BOARD_LIMIT_MIN, 'Not valid position');
   }
+
   function isMarkTypeValid(newMark) {
-    _MARK_TYPES.some((markType) => newMark === markType);
+    Common().EvaluateConditionElseThrowErrorMsg(_MARK_TYPES.some((markType) => newMark === markType), 'Not valid mark type');
   }
+
   function isNewMarkTypeAndPositionValid(newMark, position) {
     return isMarkTypeValid(newMark) && isPositionValid(position);
   }
-  function setBoardMark(position, newMark) {
-    if (isNewMarkTypeAndPositionValid) {
-      _boardMarks[position] = newMark;
-    } else {
-      // TODO handle error
+
+  function setBoardMark(newMark, position) {
+    if (isNewMarkTypeAndPositionValid(newMark, position)) {
+      _board[position] = newMark;
     }
   }
-  function getGameBoardData() {
-    return _boardMarks;
+
+  function getBoard() {
+    return _board;
   }
   return {
-    setGameBoardData: setBoardMark,
-    getGameBoardData,
+    initBoard,
+    setBoardMark,
+    getBoard,
   };
 })();
 
 // * Tests
-//  Board Module
-console.log(`${Board.setGameBoardData('2', 'X')}`);
-console.log(`${Board.getGameBoardData()}`); // Return boardMarks with the position of X in the 2nd cell
-console.log(`${Board.setGameBoardData('1', 'O')}`);
-console.log(`${Board.getGameBoardData()}`); // Return boardMarks with the position of O in the 1st cell
-console.log(`${Board.setGameBoardData('10', 'O')}`); // Return error
-console.log(`${Board.setGameBoardData('2', 'Y')}`); // Return error
+// * Board Module
+function LogAndDisplayBoardState(msg) {
+  console.log(msg);
+  console.log(Board.getBoard());
+}
+Board.initBoard();
+LogAndDisplayBoardState('Blank board');
+Board.setBoardMark('X', 1);
+LogAndDisplayBoardState('2nd position in board as X');
+Board.setBoardMark('O', 0);
+LogAndDisplayBoardState('1st position in board as O');
+Board.setBoardMark('O', 10);
+LogAndDisplayBoardState('Return error invalid position');
+Board.setBoardMark('Y', '2');
+LogAndDisplayBoardState('Return error invalid mark');
