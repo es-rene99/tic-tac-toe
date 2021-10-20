@@ -1,9 +1,13 @@
 const Common = (() => {
   function EvaluateConditionElseThrowErrorMsg(condition, msg) {
-    if (condition) {
-      return true;
+    try {
+      if (condition) {
+        return true;
+      }
+      throw (new Error(msg));
+    } catch (err) {
+      console.log(err);
     }
-    // throw (new Error(msg));
   }
   return {
     EvaluateConditionElseThrowErrorMsg,
@@ -23,12 +27,14 @@ const Board = (() => {
     }
   }
 
-  function isPositionValid(position) {
-    Common.EvaluateConditionElseThrowErrorMsg(position > _BOARD_LIMIT_MAX || position < _BOARD_LIMIT_MIN, 'Not valid position');
+  function isMarkTypeValid(newMark) {
+    const condition = _MARK_TYPES.some((markType) => newMark === markType);
+    return Common.EvaluateConditionElseThrowErrorMsg(condition, 'Not valid mark type');
   }
 
-  function isMarkTypeValid(newMark) {
-    Common.EvaluateConditionElseThrowErrorMsg(_MARK_TYPES.some((markType) => newMark === markType), 'Not valid mark type');
+  function isPositionValid(position) {
+    const condition = (position < _BOARD_LIMIT_MAX && position > _BOARD_LIMIT_MIN);
+    return Common.EvaluateConditionElseThrowErrorMsg(condition, 'Not valid position');
   }
 
   function isNewMarkTypeAndPositionValid(newMark, position) {
@@ -51,10 +57,10 @@ const Board = (() => {
   };
 })();
 
-// * Tests
+// #region Tests
 // * Board Module
 function LogAndDisplayBoardState(msg) {
-  console.log(msg);
+  console.log(`\n ${msg} \n`);
   console.log(Board.getBoard());
 }
 Board.initBoard();
@@ -67,3 +73,4 @@ Board.setBoardMark('O', 10);
 LogAndDisplayBoardState('Return error invalid position');
 Board.setBoardMark('Y', '2');
 LogAndDisplayBoardState('Return error invalid mark');
+// #endregion
