@@ -76,57 +76,95 @@ const Board = (() => {
 const Player = (markType) => {
   let _markType = markType;
 
-  function changeMarkType(markType) {
-    GameBase.isMarkTypeValid(markType);
-    _markType = markType;
+  function changeMarkType(newMarkType) {
+    if (GameBase.isMarkTypeValid(newMarkType)) {
+      _markType = newMarkType;
+    }
   }
 
   function getMarkType() {
     return _markType;
   }
 
-  function setDefaultNameBasedOnMarkType() {
-    return `Player ${_markType};`;
+  function _setDefaultNameBasedOnMarkType() {
+    return `Player ${_markType}`;
   }
 
-  let _name = setDefaultNameBasedOnMarkType();
+  let _name = _setDefaultNameBasedOnMarkType();
+
+  function _isPlayerNameEmpty(name) {
+    Common.EvaluateConditionElseThrowErrorMsg((!Common.isEmpty(name), 'Name cannot be empty!'));
+  }
 
   function changeName(name) {
-    _name = name;
+    if (!_isPlayerNameEmpty(name)) {
+      _name = name;
+    }
   }
 
   function getName() {
     return _name;
   }
 
-  function isPlayerNameEmpty(name) {
-    Common.EvaluateConditionElseThrowErrorMsg((!Common.isEmpty(name), 'Name cannot be empty!'));
-  }
-
   return {
-    changeName, getName,
+    getName, getMarkType, changeName, changeMarkType, _isPlayerNameEmpty,
   };
 };
 
-// #region Tests
-// * Board Module
-// #region
-function LogAndDisplayBoardState(msg) {
-  console.log(`\n ${msg} \n`);
-  console.log(Board.getBoard());
-}
-Board.initBoard();
-LogAndDisplayBoardState('Blank board');
-Board.setBoardMark('X', 1);
-LogAndDisplayBoardState('2nd position in board as X');
-Board.setBoardMark('O', 0);
-LogAndDisplayBoardState('1st position in board as O');
-Board.setBoardMark('O', 10);
-LogAndDisplayBoardState('Return error invalid position');
-Board.setBoardMark('Y', '2');
-LogAndDisplayBoardState('Return error invalid mark');
-// #endregion
-// * Player Module
-// #region
-// #endregion
-// #endregion
+const Tests = (() => {
+  function TestLog(msg) {
+    console.log(`\n ${msg} \n`);
+  }
+  function LogAndDisplayObjectState(msg, objStateMethod) {
+    TestLog(msg);
+    console.log(objStateMethod);
+  }
+  const BoardTests = (() => {
+    function LogAndDisplayBoardName(msg) {
+      LogAndDisplayObjectState(msg, Board.getBoard());
+    }
+    // TODO need to refactor executeTests
+    function executeTests() {
+      Board.initBoard();
+      LogAndDisplayBoardName('Blank board');
+      Board.setBoardMark('X', 1);
+      LogAndDisplayBoardName('2nd position in board as X');
+      Board.setBoardMark('O', 0);
+      LogAndDisplayBoardName('1st position in board as O');
+      Board.setBoardMark('O', 10);
+      LogAndDisplayBoardName('Return error invalid position');
+      Board.setBoardMark('Y', '2');
+      LogAndDisplayBoardName('Return error invalid mark');
+    }
+    return {
+      executeTests,
+    };
+  })();
+
+  const PlayerTests = (() => {
+    function LogAndDisplayPlayerState(msg, playerObj) {
+      LogAndDisplayObjectState(msg, `Name: ${playerObj.getName()}, Mark: ${playerObj.getMarkType()} `);
+    }
+    function executeTests() {
+      const playerTest = Player('O');
+      LogAndDisplayPlayerState('Created Player', playerTest);
+      playerTest.changeName('Mark');
+      LogAndDisplayPlayerState('Changed name', playerTest);
+      playerTest.changeMarkType('O');
+      LogAndDisplayPlayerState('Changed mark', playerTest);
+      playerTest.changeMarkType('3');
+      LogAndDisplayPlayerState('Wrong mark', playerTest);
+      playerTest.changeName('');
+      LogAndDisplayPlayerState('Empty name!', playerTest);
+    }
+    return {
+      executeTests,
+    };
+  })();
+
+  return {
+    BoardTests, PlayerTests,
+  };
+})();
+
+Tests.PlayerTests.executeTests();
