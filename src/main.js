@@ -16,9 +16,13 @@ const Common = (() => {
       console.log(err);
     }
   }
+  function randomBoolean() {
+    return Math.random() < 0.5;
+  }
   return {
     EvaluateConditionElseThrowErrorMsg,
     isEmpty,
+    randomBoolean,
   };
 })();
 
@@ -110,6 +114,28 @@ const Player = (markType) => {
     getName, getMarkType, changeName, changeMarkType, _isPlayerNameEmpty,
   };
 };
+
+const GameLogic = (() => {
+  let userMarkType;
+  let computerMarkType;
+
+  function pickUserMarkType(markType) {
+    if (GameBase.isMarkTypeValid(markType)) {
+      userMarkType = markType;
+    }
+  }
+  function pickComputerMarkType() {
+    if (userMarkType === 'O') {
+      computerMarkType = 'X';
+    } else {
+      computerMarkType = 'O';
+    }
+  }
+
+  function startGame() {
+    Board.initBoard();
+  }
+})();
 
 const Tests = (() => {
   function TestLog(msg) {
