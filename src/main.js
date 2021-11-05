@@ -19,6 +19,9 @@ const Common = (() => {
   function randomBoolean() {
     return Math.random() < 0.5;
   }
+  function randomArrElement() {
+    Math.floor(Math.random() * this.length); // https://www.geeksforgeeks.org/how-to-select-a-random-element-from-array-in-javascript/
+  }
   return {
     EvaluateConditionElseThrowErrorMsg,
     isEmpty,
@@ -52,13 +55,29 @@ const Board = (() => {
     }
   }
 
+  function isPositionInLimits(position) {
+    const isPositionInLimits = (position < _BOARD_LIMIT_MAX && position > _BOARD_LIMIT_MIN);
+    return Common.EvaluateConditionElseThrowErrorMsg(isPositionInLimits, 'Not valid position');
+  }
+
+  function isPositionAvailable(position) {
+    const isPositionAvailable = (_board[position] === _DEFAULT_MARK_VALUE);
+    return Common.EvaluateConditionElseThrowErrorMsg(isPositionAvailable, 'Not valid position');
+  }
+
   function isPositionValid(position) {
-    const condition = (position < _BOARD_LIMIT_MAX && position > _BOARD_LIMIT_MIN);
-    return Common.EvaluateConditionElseThrowErrorMsg(condition, 'Not valid position');
+    return isPositionAvailable(position) && isPositionInLimits(position);
   }
 
   function isNewMarkTypeAndPositionValid(newMark, position) {
     return GameBase.isMarkTypeValid(newMark) && isPositionValid(position);
+  }
+
+  function getAvailableBoardPositions() {
+    const availablePositionIndexes = [..._board.keys()].filter(
+      (index) => _board[index] === _DEFAULT_MARK_VALUE,
+    );
+    return availablePositionIndexes;
   }
 
   function setBoardMark(newMark, position) {
@@ -74,6 +93,7 @@ const Board = (() => {
     initBoard,
     setBoardMark,
     getBoard,
+    getAvailableBoardPositions,
   };
 })();
 
@@ -110,10 +130,24 @@ const Player = (markType) => {
     return _name;
   }
 
+  function setBoardMark(position) {
+    Board.setBoardMark(_markType, position);
+  }
+
   return {
-    getName, getMarkType, changeName, changeMarkType, _isPlayerNameEmpty,
+    getName, getMarkType, changeName, changeMarkType, _isPlayerNameEmpty, setBoardMark,
   };
 };
+
+const ComputerPlayer = ((markType) => {
+  const prototype = Player(markType);
+  function setBoardMark() {
+    const availableBoardPositions = Board.getAvailableBoardPositions();
+    const randomAvailablePosition = availableBoardPositions[Common.randomArrElement()];
+    // TODO left here Board.setBoardMark
+  }
+  return { ...prototype };
+})();
 
 const GameLogic = (() => {
   let userMarkType;
