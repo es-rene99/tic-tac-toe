@@ -1,4 +1,5 @@
 const Main = (() => {
+
   const Common = (() => {
     function isEmpty(value) {
       if (typeof value !== 'undefined' && value) {
@@ -112,7 +113,7 @@ const Main = (() => {
     }
 
     function _setDefaultNameBasedOnMarkType() {
-      return Player ${ _markType };
+      return `Player ${_markType}`;
     }
 
     let _name = _setDefaultNameBasedOnMarkType();
@@ -171,7 +172,7 @@ const Main = (() => {
 
   const Tests = (() => {
     function TestLog(msg) {
-      console.log(\n ${ msg } \n);
+      console.log(`\n ${msg} \n`);
     }
     function LogAndDisplayObjectState(msg, objStateMethod) {
       TestLog(msg);
@@ -201,8 +202,8 @@ const Main = (() => {
 
     const PlayerTests = (() => {
       function LogAndDisplayPlayerState(msg, playerObj) {
-        LogAndDisplayObjectState(msg, Name: ${ playerObj.getName() }, Mark: ${ playerObj.getMarkType() });
-      }
+        LogAndDisplayObjectState(msg, `Name: ${playerObj.getName()}, Mark: ${playerObj.getMarkType()}`);
+      };
       function executeTests() {
         const playerTest = Player('O');
         LogAndDisplayPlayerState('Created Player', playerTest);
@@ -228,13 +229,15 @@ const Main = (() => {
   const UiHandler = (() => {
     const boardHtml = document.getElementById('board');
     function displayBoard() {
-      squares = Board.getBoard();
-      const newSquare = document.createElement('div');
-      newSquare.className = 'square';
-      squares.forEach(square => {
-
+      const squareValues = Board.getBoard();
+      const newSquareHtml = document.createElement('div');
+      newSquareHtml.className = 'square';
+      squareValues.forEach(squareValue => {
+        newSquareHtml.textContent = squareValue;
+        boardHtml.appendChild(newSquareHtml);
       });
     }
+    return { displayBoard }
   })();
 
   function init() {
@@ -248,6 +251,3 @@ const Main = (() => {
   };
 })();
 
-Main.init();
-
-Main.Tests.PlayerTests.executeTests();
