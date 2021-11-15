@@ -1,5 +1,4 @@
 const Main = (() => {
-
   const Common = (() => {
     function isEmpty(value) {
       if (typeof value !== 'undefined' && value) {
@@ -167,7 +166,6 @@ const Main = (() => {
         computerMarkType = 'O';
       }
     }
-
   })();
 
   const Tests = (() => {
@@ -203,7 +201,7 @@ const Main = (() => {
     const PlayerTests = (() => {
       function LogAndDisplayPlayerState(msg, playerObj) {
         LogAndDisplayObjectState(msg, `Name: ${playerObj.getName()}, Mark: ${playerObj.getMarkType()}`);
-      };
+      }
       function executeTests() {
         const playerTest = Player('O');
         LogAndDisplayPlayerState('Created Player', playerTest);
@@ -232,22 +230,20 @@ const Main = (() => {
       const squareValues = Board.getBoard();
       const newSquareHtml = document.createElement('div');
       newSquareHtml.className = 'square';
-      squareValues.forEach(squareValue => {
+      squareValues.forEach((squareValue) => {
         newSquareHtml.textContent = squareValue;
         boardHtml.appendChild(newSquareHtml);
       });
     }
-    return { displayBoard }
+    return { displayBoard };
   })();
 
   function init() {
     Board.initBoard();
     UiHandler.displayBoard();
-  };
-
+  }
 
   return {
-    Common, GameBase, Board, Player, ComputerPlayer, GameLogic, Tests, init
+    Common, GameBase, Board, Player, ComputerPlayer, GameLogic, Tests, init,
   };
 })();
-
