@@ -48,7 +48,7 @@ const Main = (() => {
 
     const _BOARD_LIMIT_MIN = 0;
     const _BOARD_LIMIT_MAX = 8;
-    const _DEFAULT_MARK_VALUE = 'blank';
+    const _DEFAULT_MARK_VALUE = '';
 
     function initBoard() {
       for (let index = _BOARD_LIMIT_MIN; index < _BOARD_LIMIT_MAX; index++) {
@@ -228,9 +228,9 @@ const Main = (() => {
     const boardHtml = document.getElementById('board');
     function displayBoard() {
       const squareValues = Board.getBoard();
-      const newSquareHtml = document.createElement('div');
-      newSquareHtml.className = 'square';
       squareValues.forEach((squareValue) => {
+        const newSquareHtml = document.createElement('div');
+        newSquareHtml.className = 'square';
         newSquareHtml.textContent = squareValue;
         boardHtml.appendChild(newSquareHtml);
       });
@@ -241,9 +241,13 @@ const Main = (() => {
   function init() {
     Board.initBoard();
     UiHandler.displayBoard();
+    // * Console log tests
+    Main.Tests.BoardTests.executeTests();
   }
 
   return {
-    Common, GameBase, Board, Player, ComputerPlayer, GameLogic, Tests, init,
+    Tests, init,
   };
 })();
+
+Main.init();
