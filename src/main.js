@@ -47,7 +47,7 @@ const Main = (() => {
     const _board = [];
 
     const _BOARD_LIMIT_MIN = 0;
-    const _BOARD_LIMIT_MAX = 8;
+    const _BOARD_LIMIT_MAX = 9;
     const _DEFAULT_MARK_VALUE = '';
 
     function initBoard() {
@@ -228,7 +228,7 @@ const Main = (() => {
     const boardHtml = document.getElementById('board');
     function displayBoard() {
       const squareValues = Board.getBoard();
-      squareValues.forEach((squareValue) => {
+      squareValues.forEach((squareValue, index) => {
         const newSquareHtml = document.createElement('div');
         newSquareHtml.className = 'square';
         newSquareHtml.textContent = squareValue;

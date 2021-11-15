@@ -1,9 +1,17 @@
+.title{
+  text-align: center;
+}
+
 .board{
-  
+  display: grid;
+  grid-template-columns: 120px 120px 120px;
+  grid-template-rows: 120px 120px 120px 20px;
+  justify-content: center;
 }
 
 .square{
-  display: block;
-  width: 4rem;
+  --size: 6rem;
+  width: var(--size);
+  height: var(--size);
   border: 1px solid black;
 }
