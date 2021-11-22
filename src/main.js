@@ -226,12 +226,16 @@ const Main = (() => {
 
   const UiHandler = (() => {
     const boardHtml = document.getElementById('board');
+    function addMark() {
+      this.textContent = 'X';
+    }
     function displayBoard() {
       const squareValues = Board.getBoard();
-      squareValues.forEach((squareValue, index) => {
+      squareValues.forEach((squareValue) => {
         const newSquareHtml = document.createElement('div');
         newSquareHtml.className = 'square';
         newSquareHtml.textContent = squareValue;
+        newSquareHtml.addEventListener('click', addMark);
         boardHtml.appendChild(newSquareHtml);
       });
     }
