@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 const Main = (() => {
   const Common = (() => {
     function isEmpty(value) {
@@ -47,21 +48,22 @@ const Main = (() => {
     const _board = [];
 
     const _BOARD_LIMIT_MIN = 0;
-    const _BOARD_LIMIT_MAX = 9;
+    const _BOARD_LIMIT_MAX = 8;
     const _DEFAULT_MARK_VALUE = '';
 
     function initBoard() {
-      for (let index = _BOARD_LIMIT_MIN; index < _BOARD_LIMIT_MAX; index++) {
+      for (let index = _BOARD_LIMIT_MIN; index <= _BOARD_LIMIT_MAX; index++) {
         _board[index] = _DEFAULT_MARK_VALUE;
       }
     }
 
     function isPositionInLimits(position) {
-      const isPositionInLimits = (position < _BOARD_LIMIT_MAX && position > _BOARD_LIMIT_MIN);
+      const isPositionInLimits = (position <= _BOARD_LIMIT_MAX && position >= _BOARD_LIMIT_MIN);
       return Common.EvaluateConditionElseThrowErrorMsg(isPositionInLimits, 'Not valid position');
     }
 
     function isPositionAvailable(position) {
+      debugger;
       const isPositionAvailable = (_board[position] === _DEFAULT_MARK_VALUE);
       return Common.EvaluateConditionElseThrowErrorMsg(isPositionAvailable, 'Not valid position');
     }
@@ -226,27 +228,38 @@ const Main = (() => {
 
   const UiHandler = (() => {
     const boardHtml = document.getElementById('board');
-    function addMark() {
-      this.textContent = 'X';
-    }
-    function displayBoard() {
+    const SQUARE_INDEX_ATTR = 'data-square-index';
+
+    function createBoard() {
       const squareValues = Board.getBoard();
-      squareValues.forEach((squareValue) => {
+      squareValues.forEach((squareValue, index) => {
         const newSquareHtml = document.createElement('div');
         newSquareHtml.className = 'square';
+        newSquareHtml.setAttribute(SQUARE_INDEX_ATTR, index);
         newSquareHtml.textContent = squareValue;
         newSquareHtml.addEventListener('click', addMark);
         boardHtml.appendChild(newSquareHtml);
       });
     }
-    return { displayBoard };
+    function refreshBoard() {
+      boardHtml.innerHTML = '';
+      createBoard();
+    }
+
+    function addMark() {
+      const markIndex = this.getAttribute(SQUARE_INDEX_ATTR);
+      Board.setBoardMark('X', markIndex);
+      refreshBoard();
+    }
+
+    return { createBoard };
   })();
 
   function init() {
     Board.initBoard();
-    UiHandler.displayBoard();
+    UiHandler.createBoard();
     // * Console log tests
-    Main.Tests.BoardTests.executeTests();
+    // Main.Tests.BoardTests.executeTests();
   }
 
   return {
