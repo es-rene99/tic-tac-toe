@@ -63,7 +63,6 @@ const Main = (() => {
     }
 
     function isPositionAvailable(position) {
-      debugger;
       const isPositionAvailable = (_board[position] === _DEFAULT_MARK_VALUE);
       return Common.EvaluateConditionElseThrowErrorMsg(isPositionAvailable, 'Not valid position');
     }
