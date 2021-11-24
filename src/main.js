@@ -137,7 +137,7 @@ const Main = (() => {
     }
 
     return {
-      getName, getMarkType, changeName, changeMarkType, _isPlayerNameEmpty, setBoardMark,
+      getName, getMarkType, changeName, changeMarkType, _isPlayerNameEmpty, setBoardMark, _markType,
     };
   };
 
@@ -146,27 +146,80 @@ const Main = (() => {
     function setBoardMark() {
       const availableBoardPositions = Board.getAvailableBoardPositions();
       const randomAvailablePosition = availableBoardPositions[Common.randomArrElement()];
-      // TODO left here Board.setBoardMark
+      // TODO Board.setBoardMark
     }
     return { ...prototype };
   })();
 
   const GameLogic = (() => {
-    let userMarkType;
-    let computerMarkType;
+    let _userMarkType;
+    let _computerMarkType;
+    // TODO need to do it random or by pick at the beginning
+    const _player1 = Player('X');
+    const _player2 = Player('O');
+    const currentPlayer = {};
 
     function pickUserMarkType(markType) {
       if (GameBase.isMarkTypeValid(markType)) {
-        userMarkType = markType;
+        _userMarkType = markType;
       }
     }
     function pickComputerMarkType() {
-      if (userMarkType === 'O') {
-        computerMarkType = 'X';
+      if (_userMarkType === 'O') {
+        _computerMarkType = 'X';
       } else {
-        computerMarkType = 'O';
+        _computerMarkType = 'O';
       }
     }
+
+    function setDefaultPlayer() {
+      Object.assign(currentPlayer, _player1);
+    }
+
+    function switchPlayer() {
+      const isMarkTypeFromCurrentPlayerEqualToPlayer1 = currentPlayer.getMarkType()
+        === _player1.getMarkType();
+      if (isMarkTypeFromCurrentPlayerEqualToPlayer1) {
+        Object.assign(currentPlayer, _player2);
+      } else {
+        Object.assign(currentPlayer, _player1);
+      }
+    }
+
+    return {
+      switchPlayer, currentPlayer, setDefaultPlayer,
+    };
+  })();
+
+  const UiHandler = (() => {
+    const boardHtml = document.getElementById('board');
+    const SQUARE_INDEX_ATTR = 'data-square-index';
+
+    function createBoard() {
+      const squareValues = Board.getBoard();
+      squareValues.forEach((squareValue, index) => {
+        const newSquareHtml = document.createElement('div');
+        newSquareHtml.className = 'square';
+        newSquareHtml.setAttribute(SQUARE_INDEX_ATTR, index);
+        newSquareHtml.textContent = squareValue;
+        newSquareHtml.addEventListener('click', addMark);
+        boardHtml.appendChild(newSquareHtml);
+      });
+    }
+    function refreshBoard() {
+      boardHtml.innerHTML = '';
+      createBoard();
+    }
+
+    function addMark() {
+      debugger;
+      const markIndex = this.getAttribute(SQUARE_INDEX_ATTR);
+      GameLogic.currentPlayer.setBoardMark(markIndex);
+      GameLogic.switchPlayer();
+      refreshBoard();
+    }
+
+    return { createBoard };
   })();
 
   const Tests = (() => {
@@ -225,36 +278,8 @@ const Main = (() => {
     };
   })();
 
-  const UiHandler = (() => {
-    const boardHtml = document.getElementById('board');
-    const SQUARE_INDEX_ATTR = 'data-square-index';
-
-    function createBoard() {
-      const squareValues = Board.getBoard();
-      squareValues.forEach((squareValue, index) => {
-        const newSquareHtml = document.createElement('div');
-        newSquareHtml.className = 'square';
-        newSquareHtml.setAttribute(SQUARE_INDEX_ATTR, index);
-        newSquareHtml.textContent = squareValue;
-        newSquareHtml.addEventListener('click', addMark);
-        boardHtml.appendChild(newSquareHtml);
-      });
-    }
-    function refreshBoard() {
-      boardHtml.innerHTML = '';
-      createBoard();
-    }
-
-    function addMark() {
-      const markIndex = this.getAttribute(SQUARE_INDEX_ATTR);
-      Board.setBoardMark('X', markIndex);
-      refreshBoard();
-    }
-
-    return { createBoard };
-  })();
-
   function init() {
+    GameLogic.setDefaultPlayer();
     Board.initBoard();
     UiHandler.createBoard();
     // * Console log tests
