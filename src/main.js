@@ -15,7 +15,8 @@ const Main = (() => {
         }
         throw (new Error(msg));
       } catch (err) {
-        console.log(err);
+        console.error(err);
+        GameLogic.setErrorMsg(err.message);
       }
     }
     function randomBoolean() {
@@ -152,12 +153,13 @@ const Main = (() => {
   })();
 
   const GameLogic = (() => {
+    let errorMsg;
     let _userMarkType;
     let _computerMarkType;
     // TODO need to do it random or by pick at the beginning
     const _player1 = Player('X');
     const _player2 = Player('O');
-    const currentPlayer = {};
+    const currentPlayer = Player();
 
     function pickUserMarkType(markType) {
       if (GameBase.isMarkTypeValid(markType)) {
@@ -170,6 +172,17 @@ const Main = (() => {
       } else {
         _computerMarkType = 'O';
       }
+    }
+    function setErrorMsg(msg) {
+      errorMsg = msg;
+    }
+
+    function clearErrorMsg() {
+      errorMsg = '';
+    }
+
+    function getErrorMsg() {
+      return errorMsg;
     }
 
     function setDefaultPlayer() {
@@ -187,7 +200,7 @@ const Main = (() => {
     }
 
     return {
-      switchPlayer, currentPlayer, setDefaultPlayer,
+      switchPlayer, currentPlayer, setDefaultPlayer, setErrorMsg, getErrorMsg, clearErrorMsg,
     };
   })();
 
@@ -208,14 +221,17 @@ const Main = (() => {
     }
     function refreshBoard() {
       boardHtml.innerHTML = '';
+      GameLogic.clearErrorMsg();
       createBoard();
     }
 
     function addMark() {
-      debugger;
       const markIndex = this.getAttribute(SQUARE_INDEX_ATTR);
       GameLogic.currentPlayer.setBoardMark(markIndex);
-      GameLogic.switchPlayer();
+      const isRoundWithNoErrors = GameLogic.getErrorMsg();
+      if (!isRoundWithNoErrors) {
+        GameLogic.switchPlayer();
+      }
       refreshBoard();
     }
 
