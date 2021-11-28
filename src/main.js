@@ -47,7 +47,6 @@ const Main = (() => {
 
   const Board = (() => {
     const _board = [];
-
     const _BOARD_LIMIT_MIN = 0;
     const _BOARD_LIMIT_MAX = 8;
     const _DEFAULT_MARK_VALUE = '';
@@ -176,7 +175,6 @@ const Main = (() => {
     function setErrorMsg(msg) {
       errorMsg = msg;
     }
-
     function clearErrorMsg() {
       errorMsg = '';
     }
@@ -197,6 +195,35 @@ const Main = (() => {
       } else {
         Object.assign(currentPlayer, _player1);
       }
+    }
+
+    function determineIfVictory(currentPlayerMark) {
+      const boardMarks = Board.getBoard();
+
+      // TODO Need to do logic for multiple winning conditions
+      const victoryConditions = {
+        isVictoryByRowMatch() {
+          const winningIndexesList = [[0, 1, 2], [3, 4, 5], [6, 7, 8]];
+          return winningIndexesList.some(
+            (winningIndexes) => winningIndexes.every(
+              (winningIndex) => currentPlayerMark === boardMarks[winningIndex],
+            ),
+          );
+        },
+        isVictoryByColumnMatch() {
+
+        },
+        isVictoryByDiagonalMatch() {
+
+        },
+      };
+
+      if (victoryConditions.isVictoryByColumnMatch()
+        || victoryConditions.isVictoryByDiagonalMatch()
+        || victoryConditions.isVictoryByRowMatch()) {
+        return true;
+      }
+      return false;
     }
 
     return {
